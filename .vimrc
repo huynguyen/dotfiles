@@ -61,6 +61,7 @@ autocmd FileType ruby,eruby let g:rubycomplete_rails = 0
 autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 0
 
 let g:ycm_filetype_specific_completion_to_disable = {'ruby': 1}
+let g:ycm_rust_src_path = substitute(system('rustc --print sysroot'), '\n\+$', '', '') . '/lib/rustlib/src/rust/src'
 
 " SAY NO TO TRAILING WHITESPACE!
 function! WhiteSpace()
@@ -218,10 +219,11 @@ let g:ycm_confirm_extra_conf = 0
 " global fallback when it can't find project specific ycm conf
 let g:ycm_global_ycm_extra_conf = '~./ycm_extra_conf.py'
 
-map <leader>t :CtrlP<CR>
-let g:ctrlp_cmd = 'CtrlP'
-let g:ctrlp_working_path_mode = ''
+"map <leader>t :CtrlP<CR>
+"let g:ctrlp_cmd = 'CtrlP'
+"let g:ctrlp_working_path_mode = ''
 
+map <leader>t :Files<CR>
 " matcher better fuzzy-find
 if executable('ag')
   " Use ag over grep
@@ -300,47 +302,50 @@ highlight DiffText   cterm=bold ctermfg=10 ctermbg=88 gui=none guifg=bg guibg=Re
 let g:xcode_runner_command = 'VtrSendCommandToRunner! {cmd}'
 
 " vundle
-"filetype off
+filetype off
 "set rtp+=~/.vim/bundle/Vundle.vim
 call plug#begin()
 "Plugin 'gmarik/Vundle.vim'
 
-Plug 'The-NERD-tree'
-Plug 'tpope/vim-rails.git'
-Plug 'fugitive.vim'
-Plug 'endwise.vim'
-Plug 'Tabular'
-Plug 'matchit.zip'
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+"Plug 'tpope/vim-rails.git'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-endwise'
+Plug 'godlygeek/tabular'
+Plug 'tmhedberg/matchit'
 Plug 'rking/ag.vim'
-Plug 'kien/ctrlp.vim.git'
-Plug 'kchmck/vim-coffee-script.git'
-Plug 'vesan/scss-syntax.vim.git'
+"Plug 'kien/ctrlp.vim.git'
+"Plug 'kchmck/vim-coffee-script.git'
+"Plug 'vesan/scss-syntax.vim.git'
 "Plugin 'python.vim'
 Plug 'scrooloose/nerdcommenter'
-Plug 'vim-scripts/FuzzyFinder'
-Plug 'L9'
-Plug 'tpope/vim-markdown'
+"Plug 'vim-scripts/FuzzyFinder'
+Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'timcharper/textile.vim'
-Plug 'nelstrom/vim-markdown-preview'
-Plug 'EasyGrep'
+Plug 'nelstrom/vim-markdown-preview', { 'for': 'markdown' }
+Plug 'dkprice/vim-easygrep'
 Plug 'scrooloose/syntastic'
-Plug 'Lokaltog/vim-powerline.git'
+"Plug 'Lokaltog/vim-powerline.git'
 Plug 'tpope/vim-surround'
-Plug 'go.vim'
+Plug 'fatih/vim-go', { 'for': 'go' }
 Plug 'nono/vim-handlebars'
 Plug 'skalnik/vim-vroom'
 "Plugin 'tpope/vim-Pluginr'
 Plug 'elixir-lang/vim-elixir'
 Plug 'kelan/gyp.vim'
-Plug 'Fswitch'
-Plug 'file:///Users/weehuy/.vim/bundle/elm.vim'
+Plug 'derekwyatt/vim-fswitch'
+"Plug 'file:///Users/weehuy/.vim/bundle/elm.vim'
 Plug 'Valloric/YouCompleteMe'
 Plug 'rdnetto/YCM-Generator'
-Plug 'Tagbar'
-Plug 'git@github.com:gfontenot/vim-xcode.git'
-Plug 'git@github.com:christoomey/vim-tmux-runner.git'
+Plug 'majutsushi/tagbar'
+"Plug 'git@github.com:gfontenot/vim-xcode.git'
+"Plug 'git@github.com:christoomey/vim-tmux-runner.git'
 Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
+Plug 'rust-lang/rust.vim', {'for': 'rust'}
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 call plug#end()
 
 filetype plugin indent on
 hi CursorLine   cterm=NONE ctermbg=235 guibg=darkred
+au BufRead,BufNewFile *.rs set filetype=rust
