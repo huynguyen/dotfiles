@@ -1,0 +1,9 @@
+"~/.xvimrc - Read by the XVim2 plugin for Xcode.
+
+set incsearch
+set ignorecase
+set smartcase
+set pasteboard
+
+
+
