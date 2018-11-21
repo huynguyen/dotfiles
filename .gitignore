@@ -1,3 +1,5 @@
 README.md
 .cfg
 .dotfiles
+Carthage/
+.DS_Store
