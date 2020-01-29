@@ -39,9 +39,8 @@ map <F3> <plug>NERDCommenterToggle<CR>
 map <F5> :!ctags --fields=+l --extra=+f --exclude=.git --exclude=public --exclude=*.js --exclude=log -R * `rvm gemdir`/gems/*<CR><CR>
 map <F6> :!ripper-tags --exclude=.git --exclude=public --exclude=log -R<CR><CR>
 map <F7> :!ctags -R --c++ -kinds=+p --fields=+iaS --extra=+q --exclude="*.js" <CR><CR>
-map <F9> :YcmCompleter FixIt<CR> :ccl<CR>
-noremap <leader>jd :YcmCompleter GoTo<CR>
-
+"
+"
 " Hard mode, stop using arrow keys damn it!
 "noremap <Up> <NOP>
 "noremap <Down> <NOP>
@@ -53,15 +52,6 @@ nmap <silent> <Up> :wincmd k<CR>
 nmap <silent> <Down> :wincmd j<CR>
 nmap <silent> <Left> :wincmd h<CR>
 nmap <silent> <Right> :wincmd l<CR>
-
-"ruby
-autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
-autocmd FileType ruby,eruby let g:rubycomplete_buffer_loading = 0
-autocmd FileType ruby,eruby let g:rubycomplete_rails = 0
-autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 0
-
-let g:ycm_filetype_specific_completion_to_disable = {'ruby': 1}
-let g:ycm_rust_src_path = substitute(system('rustc --print sysroot'), '\n\+$', '', '') . '/lib/rustlib/src/rust/src'
 
 " SAY NO TO TRAILING WHITESPACE!
 function! WhiteSpace()
@@ -167,10 +157,10 @@ if has("statusline") && !&cp
   set statusline+=%{fugitive#statusline()}
 
   "" Add syntastic if enabled
-  let g:syntastic_enable_signs=1
-  set statusline+=%#warningmsg#
-  set statusline+=%{SyntasticStatuslineFlag()}
-  set statusline+=%*
+  "" let g:syntastic_enable_signs=1
+  "" set statusline+=%#warningmsg#
+  "" set statusline+=%{SyntasticStatuslineFlag()}
+  "" set statusline+=%*
 
   "" Finish the statusline
   set statusline+=Line:%l/%L[%p%%]
@@ -211,55 +201,6 @@ map <Leader>; :call RunTest("")<CR>
 map <Leader>' :call RunTestFile("")<CR>
 set list listchars=tab:\ \ ,trail:·
 
-" YCM Config
-let g:ycm_autoclose_preview_window_after_completion = 1
-let g:ycm_autoclose_preview_window_after_insertion = 1
-" don't prompt to load
-let g:ycm_confirm_extra_conf = 0
-" global fallback when it can't find project specific ycm conf
-let g:ycm_global_ycm_extra_conf = '~./ycm_extra_conf.py'
-
-"map <leader>t :CtrlP<CR>
-"let g:ctrlp_cmd = 'CtrlP'
-"let g:ctrlp_working_path_mode = ''
-
-map <leader>t :Files<CR>
-" matcher better fuzzy-find
-if executable('ag')
-  " Use ag over grep
-  set grepprg=ag\ --nogroup\ --nocolor
-
-  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-endif
-
-if executable('matcher')
-    let g:ctrlp_match_func = { 'match': 'GoodMatch' }
-
-    function! GoodMatch(items, str, limit, mmode, ispath, crfile, regex)
-
-      " Create a cache file if not yet exists
-      let cachefile = ctrlp#utils#cachedir().'/matcher.cache'
-      if !( filereadable(cachefile) && a:items == readfile(cachefile) )
-        call writefile(a:items, cachefile)
-      endif
-      if !filereadable(cachefile)
-        return []
-      endif
-
-      " a:mmode is currently ignored. In the future, we should probably do
-      " something about that. the matcher behaves like "full-line".
-      let cmd = 'matcher --limit '.a:limit.' --manifest '.cachefile.' '
-      if !( exists('g:ctrlp_dotfiles') && g:ctrlp_dotfiles )
-        let cmd = cmd.'--no-dotfiles '
-      endif
-      let cmd = cmd.a:str
-
-      return split(system(cmd), "\n")
-
-    endfunction
-end
-
 " selecta
 " Run a given vim command on the results of fuzzy selecting from a given shell
 " command. See usage below.
@@ -289,9 +230,16 @@ function! SelectaIdentifier()
 endfunction
 nnoremap <c-g> :call SelectaIdentifier()<cr>
 
+" fzf
+nmap <leader>t :Files<CR>
+"" [Buffers] Jump to the existing window if possible
+let g:fzf_buffers_jump = 1
+" You can set up fzf window using a Vim command (Neovim or latest Vim 8 required)
+let g:fzf_layout = { 'window': 'enew' }
+
 " Deep git blame
 " git blame with the following flags -w -M -CCC
-command Dblame Gblame -w -M -CCC
+"command Dblame Gblame -w -M -CCC
 
 highlight DiffAdd    cterm=bold ctermfg=10 ctermbg=17 gui=none guifg=bg guibg=Red
 highlight DiffDelete cterm=bold ctermfg=10 ctermbg=17 gui=none guifg=bg guibg=Red
@@ -301,49 +249,17 @@ highlight DiffText   cterm=bold ctermfg=10 ctermbg=88 gui=none guifg=bg guibg=Re
 " vim-xcode
 let g:xcode_runner_command = 'VtrSendCommandToRunner! {cmd}'
 
-" vundle
+" Plug
 filetype off
-"set rtp+=~/.vim/bundle/Vundle.vim
 call plug#begin()
-"Plugin 'gmarik/Vundle.vim'
 
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-"Plug 'tpope/vim-rails.git'
 Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-endwise'
-Plug 'godlygeek/tabular'
-Plug 'tmhedberg/matchit'
-Plug 'rking/ag.vim'
-"Plug 'kien/ctrlp.vim.git'
-"Plug 'kchmck/vim-coffee-script.git'
-"Plug 'vesan/scss-syntax.vim.git'
-"Plugin 'python.vim'
 Plug 'scrooloose/nerdcommenter'
-"Plug 'vim-scripts/FuzzyFinder'
-Plug 'tpope/vim-markdown', { 'for': 'markdown' }
-Plug 'timcharper/textile.vim'
-Plug 'nelstrom/vim-markdown-preview', { 'for': 'markdown' }
-Plug 'dkprice/vim-easygrep'
-Plug 'scrooloose/syntastic'
-"Plug 'Lokaltog/vim-powerline.git'
-Plug 'tpope/vim-surround'
-Plug 'fatih/vim-go', { 'for': 'go' }
-Plug 'nono/vim-handlebars'
-Plug 'skalnik/vim-vroom'
-"Plugin 'tpope/vim-Pluginr'
-Plug 'elixir-lang/vim-elixir'
-Plug 'kelan/gyp.vim'
-Plug 'derekwyatt/vim-fswitch'
-"Plug 'file:///Users/weehuy/.vim/bundle/elm.vim'
-Plug 'Valloric/YouCompleteMe'
-Plug 'rdnetto/YCM-Generator'
-Plug 'majutsushi/tagbar'
-"Plug 'git@github.com:gfontenot/vim-xcode.git'
-"Plug 'git@github.com:christoomey/vim-tmux-runner.git'
-Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
-Plug 'rust-lang/rust.vim', {'for': 'rust'}
+"Plug 'scrooloose/syntastic'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 call plug#end()
 
 filetype plugin indent on
