@@ -249,6 +249,9 @@ highlight DiffText   cterm=bold ctermfg=10 ctermbg=88 gui=none guifg=bg guibg=Re
 " vim-xcode
 let g:xcode_runner_command = 'VtrSendCommandToRunner! {cmd}'
 
+" NerdCommenter
+nmap <C-_> <plug>NERDCommenterToggle
+
 " Plug
 filetype off
 call plug#begin()
