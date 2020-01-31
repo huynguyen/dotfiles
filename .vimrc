@@ -29,18 +29,19 @@ set encoding=utf-8
 set nocompatible
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.scssc,*.sassc
 set fillchars+=vert:\
-set nocursorline
+set cursorline
 color desert
-
 set shell=zsh\ --login
+set list listchars=tab:\ \ ,trail:·
+
+" Enable 24-bit color on terminal vim.
+if (has("termguicolors"))
+  set termguicolors
+endif
 
 map <F2> :NERDTreeToggle<CR>
 map <F3> <plug>NERDCommenterToggle<CR>
-map <F5> :!ctags --fields=+l --extra=+f --exclude=.git --exclude=public --exclude=*.js --exclude=log -R * `rvm gemdir`/gems/*<CR><CR>
-map <F6> :!ripper-tags --exclude=.git --exclude=public --exclude=log -R<CR><CR>
-map <F7> :!ctags -R --c++ -kinds=+p --fields=+iaS --extra=+q --exclude="*.js" <CR><CR>
-"
-"
+
 " Hard mode, stop using arrow keys damn it!
 "noremap <Up> <NOP>
 "noremap <Down> <NOP>
@@ -57,6 +58,23 @@ nmap <silent> <Right> :wincmd l<CR>
 function! WhiteSpace()
   execute "%s/\\s\\+$//"
 endfunction
+map <Leader><Delete> :call WhiteSpace()<CR>
+
+" Remove trailing whitespace on save
+autocmd BufWritePre * :%s/\s\+$//e
+
+" quick edit vimrc
+function! EditVimConfig()
+  vsplit $HOME/.vimrc
+endfunction
+nnoremap <leader>ec :call EditVimConfig()<CR>
+
+" fzf
+nmap <leader>t :Files<CR>
+"" [Buffers] Jump to the existing window if possible
+let g:fzf_buffers_jump = 1
+" You can set up fzf window using a Vim command (Neovim or latest Vim 8 required)
+let g:fzf_layout = { 'window': 'enew' }
 
 " Escape special characters in a string for exact matching.
 " This is useful to copying strings from the file to the search tool
@@ -104,7 +122,7 @@ endfunction
 
 function! DoWindowSwap()
     "Mark destination
-    let curNum = winnr()
+    let cukNum = winnr()
     let curBuf = bufnr( "%" )
     exe g:markedWinNum . "wincmd w"
     "Switch to source and shuffle dest->source
@@ -137,11 +155,6 @@ match ErrorMsg '\%>80v.\+'
 let w:m2=matchadd('ErrorMsg', '\%>79v.\+', -1)
 au BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>79v.\+', -1)
 
-au! BufNewFile,BufRead Gemfile,Guardfile set filetype=ruby
-au BufNewFile,BufRead *.go set filetype=go
-autocmd BufWritePre * :%s/\s\+$//e
-let ruby_fold = 1
-
 if has("statusline") && !&cp
   set laststatus=2  " always show the status bar
 
@@ -169,9 +182,20 @@ if has("statusline") && !&cp
   set statusline+=[%b][0x%B]
 endif
 
+" language stuff
+au BufRead,BufNewFile *.rs set filetype=rust
+au BufNewFile,BufRead *.go set filetype=go
+au! BufNewFile,BufRead Gemfile,Guardfile set filetype=ruby
+
+" back when I did cpp...
+map <F7> :!ctags -R --c++ -kinds=+p --fields=+iaS --extra=+q --exclude="*.js" <CR><CR>
+
+" back when I did ruby...
+map <F5> :!ctags --fields=+l --extra=+f --exclude=.git --exclude=public --exclude=*.js --exclude=log -R * `rvm gemdir`/gems/*<CR><CR>
+map <F6> :!ripper-tags --exclude=.git --exclude=public --exclude=log -R<CR><CR>
+
 " Vim functions to run RSpec and Cucumber on the current file and optionally on
 " the spec/scenario under the cursor.
-
 function! RailsScriptIfExists(name)
   " Bundle exec
   if isdirectory(".bundle") || (exists("b:rails_root") && isdirectory(b:rails_root . "/.bundle"))
@@ -195,11 +219,8 @@ endfunction
 function! RunTest(args)
   call RunSpec("-l " . line('.') . a:args)
 endfunction
-
-map <Leader><Delete> :call WhiteSpace()<CR>
-map <Leader>; :call RunTest("")<CR>
-map <Leader>' :call RunTestFile("")<CR>
-set list listchars=tab:\ \ ,trail:·
+"map <Leader>; :call RunTest("")<CR>
+"map <Leader>' :call RunTestFile("")<CR>
 
 " selecta
 " Run a given vim command on the results of fuzzy selecting from a given shell
@@ -219,7 +240,7 @@ endfunction
 
 " Find all files in all non-dot directories starting in the working directory.
 " Fuzzy select one of those. Open the selected file with :e.
-nnoremap <leader>f :call SelectaCommand("find * -type f", "", ":e")<cr>
+"nnoremap <leader>f :call SelectaCommand("find * -type f", "", ":e")<cr>
 
 function! SelectaIdentifier()
   " Yank the word under the cursor into the z register
@@ -228,19 +249,13 @@ function! SelectaIdentifier()
   " the cursor
   call SelectaCommand("find * -type f", "-s " . @z, ":e")
 endfunction
-nnoremap <c-g> :call SelectaIdentifier()<cr>
-
-" fzf
-nmap <leader>t :Files<CR>
-"" [Buffers] Jump to the existing window if possible
-let g:fzf_buffers_jump = 1
-" You can set up fzf window using a Vim command (Neovim or latest Vim 8 required)
-let g:fzf_layout = { 'window': 'enew' }
+" nnoremap <c-g> :call SelectaIdentifier()<cr>
 
 " Deep git blame
 " git blame with the following flags -w -M -CCC
 "command Dblame Gblame -w -M -CCC
 
+" Colors for vimdiff
 highlight DiffAdd    cterm=bold ctermfg=10 ctermbg=17 gui=none guifg=bg guibg=Red
 highlight DiffDelete cterm=bold ctermfg=10 ctermbg=17 gui=none guifg=bg guibg=Red
 highlight DiffChange cterm=bold ctermfg=10 ctermbg=17 gui=none guifg=bg guibg=Red
@@ -251,6 +266,9 @@ let g:xcode_runner_command = 'VtrSendCommandToRunner! {cmd}'
 
 " NerdCommenter
 nmap <C-_> <plug>NERDCommenterToggle
+
+" coc
+hi CocWarningSign ctermfg=0 guifg=#ff922b
 
 " Plug
 filetype off
@@ -263,8 +281,6 @@ Plug 'scrooloose/nerdcommenter'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'andys8/vim-elm-syntax'
 call plug#end()
-
 filetype plugin indent on
-hi CursorLine   cterm=NONE ctermbg=235 guibg=darkred
-au BufRead,BufNewFile *.rs set filetype=rust
