@@ -32,6 +32,7 @@ set fillchars+=vert:\
 set cursorline
 set shell=zsh\ --login
 set list listchars=tab:\ \ ,trail:·
+set clipboard=unnamedplus
 
 " Enable 24-bit color on terminal vim.
 if (has("termguicolors"))
