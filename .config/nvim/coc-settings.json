@@ -1,12 +1,32 @@
 {
   "languageserver": {
+    "haskell": {
+      "command": "hie-wrapper",
+      "args": ["--lsp"],
+      "rootPatterns": [
+        "*.cabal",
+        "stack.yaml",
+        "cabal.project",
+        "package.yaml",
+      ],
+      "filetypes": [
+        "hs",
+        "lhs",
+        "haskell"
+      ],
+      "initializationOptions": {
+        "languageServerHaskell": {
+        }
+      }
+    },
     "elmLS": {
       "command": "elm-language-server",
       "filetypes": ["elm"],
       "rootPatterns": ["elm.json"],
       "initializationOptions": {
-        "elmAnalyseTrigger": "change"
-      }
+        "elmAnalyseTrigger": "change",
+      },
+      "trace.server": "verbose"
     }
   },
   // If you use neovim you can enable codelenses with this

@@ -3,3 +3,5 @@ README.md
 .dotfiles
 Carthage/
 .DS_Store
+node_modules
+elm-stuff
