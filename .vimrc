@@ -68,12 +68,27 @@ function! EditVimConfig()
 endfunction
 nnoremap <leader>ec :call EditVimConfig()<CR>
 
+" new terminal integration in vim8/neovim
+" To map <Esc> to exit terminal-mode: >
+tnoremap <Esc> <C-\><C-n>
+
 " fzf
 nmap <leader>t :Files<CR>
 "" [Buffers] Jump to the existing window if possible
 let g:fzf_buffers_jump = 1
 " You can set up fzf window using a Vim command (Neovim or latest Vim 8 required)
 let g:fzf_layout = { 'window': 'enew' }
+let g:fzf_layout = { 'down': '~40%' }
+
+" Spelling suggest via fzf
+function! FzfSpellSink(word)
+  exe 'normal! "_ciw'.a:word
+endfunction
+function! FzfSpell()
+  let suggestions = spellsuggest(expand("<cword>"))
+  return fzf#run({'source': suggestions, 'sink': function("FzfSpellSink"), 'down': 10 })
+endfunction
+nnoremap z= :call FzfSpell()<CR>
 
 " Escape special characters in a string for exact matching.
 " This is useful to copying strings from the file to the search tool
