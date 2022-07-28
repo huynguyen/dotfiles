@@ -3,3 +3,4 @@ README.md
 .dotfiles
 Carthage/
 .DS_Store
+.config/nvim/plugin/packer_compiled.lua
