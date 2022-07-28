@@ -307,6 +307,11 @@ return require('packer').startup(function(use)
             },
           },
         },
+        extensions = {
+          [ "ui-select" ] = {
+            require("telescope.themes").get_dropdown {}
+          }
+        }
       })
 
       vim.api.nvim_set_keymap(
@@ -327,6 +332,13 @@ return require('packer').startup(function(use)
       [[<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>]],
       { noremap = true, silent = true }
       )
+    end,
+  })
+
+  use({'nvim-telescope/telescope-ui-select.nvim',
+    requires = "nvim-telescope/telescope.nvim",
+    config = function() 
+      require("telescope").load_extension("ui-select")
     end,
   })
 
