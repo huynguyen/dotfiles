@@ -13,6 +13,9 @@ cmd("command Wq wq")
 cmd("command W w")
 cmd("command Q q")
 
+-- Remap for terminal
+map("t", "<Esc>", "<C-\\><C-n>", { noremap = true, silent = true})
+
 -- set leader to <Space>
 vim.api.nvim_set_keymap(
   "",
