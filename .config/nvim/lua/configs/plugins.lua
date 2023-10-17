@@ -394,12 +394,8 @@ return require('packer').startup(function(use)
   use({
     "lukas-reineke/indent-blankline.nvim",
     config = function()
-      require("indent_blankline").setup({
-        char = "┊",
-        filetype_exclude = { "help", "packer" },
-        buftype_exclude = { "terminal", "nofile" },
-        char_highlight = "LineNr",
-        show_trailing_blankline_indent = false,
+      require("ibl").setup({
+        indent = { char = "┊" },
       })
     end,
   })
